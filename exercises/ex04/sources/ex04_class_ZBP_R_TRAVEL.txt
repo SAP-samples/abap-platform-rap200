@@ -1,0 +1,167 @@
+CLASS lsc_zr_travel### DEFINITION INHERITING FROM cl_abap_behavior_saver.
+
+  PROTECTED SECTION.
+
+    METHODS save_modified REDEFINITION.
+
+ENDCLASS.
+
+CLASS lsc_zr_travel### IMPLEMENTATION.
+
+  METHOD save_modified.
+    DATA: Travels             TYPE STANDARD TABLE OF ZR_Travel###,
+          Travel              TYPE                   ZR_Travel###,
+          events_to_be_raised TYPE TABLE FOR EVENT ZR_Travel###~StatusUpdated.
+
+    "raise the event whenever the status is changed to 'A' (Accepted)
+    IF update-travel IS NOT INITIAL.
+      LOOP AT update-travel INTO DATA(update_travel).
+        CLEAR events_to_be_raised.
+
+        IF update_travel-%control-ReviewStatus = if_abap_behv=>mk-on.
+          APPEND INITIAL LINE TO events_to_be_raised.
+          events_to_be_raised[ 1 ] = CORRESPONDING #( update_travel ).
+          RAISE ENTITY EVENT ZR_Travel###~StatusUpdated FROM events_to_be_raised.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+  ENDMETHOD.
+
+ENDCLASS.
+
+CLASS lhc_zr_travel### DEFINITION INHERITING FROM cl_abap_behavior_handler.
+  PRIVATE SECTION.
+
+    METHODS:
+      get_global_authorizations FOR GLOBAL AUTHORIZATION
+        IMPORTING
+        REQUEST requested_authorizations FOR Travel
+        RESULT result,
+
+      get_instance_features FOR INSTANCE FEATURES
+        IMPORTING keys REQUEST requested_features FOR Travel RESULT result.
+
+    METHODS bookTravel FOR MODIFY
+      IMPORTING keys FOR ACTION Travel~bookTravel RESULT result.
+
+    METHODS cancelTravel FOR MODIFY
+      IMPORTING keys FOR ACTION Travel~cancelTravel RESULT result.
+
+    METHODS setStatusToNew FOR DETERMINE ON MODIFY
+      IMPORTING keys FOR Travel~setStatusToNew.
+ENDCLASS.
+
+CLASS lhc_zr_travel### IMPLEMENTATION.
+  METHOD get_global_authorizations.
+  ENDMETHOD.
+
+  METHOD get_instance_features.
+    "read data from relevant travel instances
+    READ ENTITIES OF ZR_Travel### IN LOCAL MODE
+      ENTITY travel
+         FIELDS ( TravelID Status )
+         WITH CORRESPONDING #( keys )
+       RESULT DATA(travels)
+       FAILED failed.
+
+    "evaluate the conditions, set the operation state, and set result parameter
+    result = VALUE #( FOR travel IN travels
+                       ( %tky                   = travel-%tky
+
+                         %features-%update      = COND #( WHEN travel-Status = zrap200_if_travel###=>travel_status-booked
+                                                          THEN if_abap_behv=>fc-o-disabled ELSE if_abap_behv=>fc-o-enabled   )
+
+                         %features-%delete      = COND #( WHEN travel-Status <> zrap200_if_travel###=>travel_status-booked AND
+                                                               travel-Status <> zrap200_if_travel###=>travel_status-cancelled
+                                                          THEN if_abap_behv=>fc-o-enabled ELSE if_abap_behv=>fc-o-disabled   )
+
+                         %action-bookTravel   = COND #( WHEN travel-Status = zrap200_if_travel###=>travel_status-booked OR
+                                                             travel-Status = zrap200_if_travel###=>travel_status-planned
+                                                          THEN if_abap_behv=>fc-o-disabled ELSE if_abap_behv=>fc-o-enabled   )
+
+                         %action-cancelTravel   = COND #( WHEN travel-Status = zrap200_if_travel###=>travel_status-cancelled OR
+                                                               travel-Status = zrap200_if_travel###=>travel_status-planned
+                                                          THEN if_abap_behv=>fc-o-disabled ELSE if_abap_behv=>fc-o-enabled   )
+                      ) ).
+  ENDMETHOD.
+
+
+  METHOD bookTravel.
+    "modify travel instance(s)
+    "update the travel status `Status`, as well as `ReviewStatus`and `Notification`
+    MODIFY ENTITIES OF ZR_Travel### IN LOCAL MODE
+       ENTITY Travel
+       UPDATE FIELDS ( Status ReviewStatus Notification )
+       WITH VALUE #( FOR key IN keys ( %tky    = key-%tky
+                                        Status       = zrap200_if_travel###=>travel_status-booked
+                                        ReviewStatus = zrap200_if_travel###=>review_status-booked
+                                        Notification = 'Travel manually booked'
+                                      ) )
+    FAILED failed
+    REPORTED reported.
+
+    "read changed data for action result
+    READ ENTITIES OF ZR_Travel### IN LOCAL MODE
+       ENTITY Travel
+       ALL FIELDS WITH
+       CORRESPONDING #( keys )
+       RESULT DATA(travels).
+
+    "set the action result parameter
+    result = VALUE #( FOR travel IN travels ( %tky   = travel-%tky
+                                              %param = travel ) ).
+  ENDMETHOD.
+
+  METHOD cancelTravel.
+    "modify travel instance(s)
+    "update the travel status `Status`, as well as `ReviewStatus`and `Notification`
+    MODIFY ENTITIES OF ZR_Travel### IN LOCAL MODE
+       ENTITY Travel
+       UPDATE FIELDS ( Status ReviewStatus Notification )
+       WITH VALUE #( FOR key IN keys ( %tky   = key-%tky
+                                       Status       = zrap200_if_travel###=>travel_status-cancelled
+                                       ReviewStatus = zrap200_if_travel###=>review_status-cancelled
+                                       Notification = 'Travel manually cancelled'
+                                     ) )
+    FAILED failed
+    REPORTED reported.
+
+    "read changed data for action result
+    READ ENTITIES OF ZR_Travel### IN LOCAL MODE
+       ENTITY Travel
+       ALL FIELDS WITH
+       CORRESPONDING #( keys )
+       RESULT DATA(travels).
+
+    "set the action result parameter
+    result = VALUE #( FOR travel IN travels ( %tky   = travel-%tky
+                                              %param = travel ) ).
+  ENDMETHOD.
+
+  METHOD setStatusToNew.
+    "read travel instance(s) of the transferred keys
+    READ ENTITIES OF ZR_Travel### IN LOCAL MODE
+     ENTITY Travel
+       FIELDS ( Status ReviewStatus )
+       WITH CORRESPONDING #( keys )
+     RESULT DATA(travels)
+     FAILED DATA(read_failed).
+
+    "if travel status is already set, do nothing, i.e. remove such instances
+    DELETE travels WHERE Status IS NOT INITIAL.
+    CHECK travels IS NOT INITIAL.
+
+    "else set travel status to new ('N')
+    MODIFY ENTITIES OF ZR_Travel### IN LOCAL MODE
+      ENTITY Travel
+        UPDATE FIELDS ( Status ReviewStatus )
+        WITH VALUE #( FOR travel IN travels ( %tky         = travel-%tky
+                                              Status       = zrap200_if_travel###=>travel_status-new
+                                              ReviewStatus = zrap200_if_travel###=>review_status-new  ) )
+    REPORTED DATA(update_reported).
+
+    "set the changing parameter
+    reported = CORRESPONDING #( DEEP update_reported ).
+  ENDMETHOD.
+
+ENDCLASS.

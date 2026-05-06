@@ -1,0 +1,42 @@
+projection implementation in class ZBP_C_TRAVEL### unique;
+strict ( 2 );
+extensible;
+use collaborative draft;
+use side effects;                               //ex04
+define behavior for ZC_TRAVEL### alias Travel
+extensible
+use etag
+{
+
+  field ( readonly ) Status, ReviewStatus, Notification;
+
+  use event StatusUpdated;                      //ex04
+
+  use create;
+  use update;
+  use delete;
+
+  use action bookTravel;
+  use action cancelTravel;
+
+  use action Edit;
+  use action Activate;
+  use action Discard;
+  use action Resume;
+  use action Prepare;
+  use action Share;
+
+  use association _Booking { create; with draft; }
+
+}
+
+define behavior for ZC_BOOKING### alias Booking
+extensible
+use etag
+{
+  use update;
+  use delete;
+
+  use association _Travel { with draft; }
+
+}

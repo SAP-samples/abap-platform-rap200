@@ -1,0 +1,88 @@
+ CLASS zrap200_external_eml_call_### DEFINITION
+   PUBLIC
+   FINAL
+   CREATE PUBLIC .
+
+   PUBLIC SECTION.
+     INTERFACES if_oo_adt_classrun.
+
+     METHODS:
+       constructor IMPORTING i_rap_bo_key TYPE sysuuid_x16 OPTIONAL
+                             i_travel_id  TYPE /dmo/travel_id OPTIONAL,
+
+       review_travel_bo RETURNING VALUE(notification) TYPE string.
+
+   PROTECTED SECTION.
+
+   PRIVATE SECTION.
+     DATA:
+       rap_bo_key TYPE sysuuid_x16,
+       travel_id  TYPE /dmo/travel_id.
+
+ ENDCLASS.
+
+
+ CLASS zrap200_external_eml_call_### IMPLEMENTATION.
+
+   METHOD constructor.
+     rap_bo_key = i_rap_bo_key.
+     travel_id  = i_travel_id.
+   ENDMETHOD.
+
+   METHOD if_oo_adt_classrun~main.
+
+     "Travel ID to be updated
+     travel_id  = 00000039.   "numc(8)
+
+     "read bo entity instance key from the db
+     SELECT SINGLE uuid FROM zr_travel###
+         WHERE TravelID = @travel_id
+         INTO @rap_bo_key .
+
+     CHECK rap_bo_key IS NOT INITIAL.
+
+     "call the dummy review workflow process
+     DATA(notification) = review_travel_bo( ).
+
+     out->write( | [Notification] { notification } for { travel_id }. | ).
+   ENDMETHOD.
+
+   METHOD review_travel_bo.
+     DATA: status        TYPE /dmo/travel_status,
+           review_status TYPE int1.
+
+     "dummy time-intensive review workflow process
+     SELECT SINGLE TotalPrice FROM zr_travel###
+         WHERE uuid = @rap_bo_key
+         INTO @DATA(total_price).
+
+     WAIT UP TO 8 SECONDS.
+
+     IF total_price < 3000 AND total_price > 0.
+       review_status = zrap200_if_travel###=>review_status-booked.
+       status = zrap200_if_travel###=>travel_status-booked.
+       notification = |{ cl_abap_context_info=>get_system_time(  ) }: Review WF successfully processed|.
+     ELSE.
+       review_status = zrap200_if_travel###=>review_status-cancelled.
+       status = zrap200_if_travel###=>travel_status-cancelled.
+       notification = |{ cl_abap_context_info=>get_system_time(  ) }: Review WF cancellation|.
+     ENDIF.
+
+     "modify relevant travel instance
+     MODIFY ENTITIES OF ZR_Travel###
+        ENTITY Travel
+        UPDATE FIELDS ( Status ReviewStatus Notification )
+        WITH VALUE #( ( %tky-uuid    = rap_bo_key
+                        status       = status
+                        reviewStatus = review_status
+                        notification = notification  ) )
+     FAILED DATA(modify_failed)
+     REPORTED DATA(modify_reported).
+
+     "commit changes
+     COMMIT ENTITIES RESPONSES
+         FAILED   DATA(commit_failed)
+         REPORTED DATA(commit_reported).
+   ENDMETHOD.
+
+ ENDCLASS.
