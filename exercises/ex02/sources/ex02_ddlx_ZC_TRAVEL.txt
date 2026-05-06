@@ -1,0 +1,110 @@
+@Metadata.layer: #CORE
+
+@UI: {
+  headerInfo: {
+    title.type      : #STANDARD,
+    title.value     : 'TravelID',
+    typeName        : 'Travel',
+    typeNamePlural  : 'Travels',
+    description     : { type: #STANDARD, value: 'TravelID' }
+  },
+
+  presentationVariant: [{ text: 'Default' ,
+                            sortOrder:[{ by: 'TravelID', direction: #DESC }],
+//                            groupBy: [ 'Status' ],
+                            visualizations: [{ type: #AS_LINEITEM },
+                                             { type: #AS_LINEITEM }] }]
+}
+annotate view ZC_TRAVEL### with
+{
+
+  @UI.facet: [ {
+    label: 'General Information',
+    id: 'GeneralInfo',
+    purpose: #STANDARD,
+    position: 10 ,
+    type: #IDENTIFICATION_REFERENCE
+  },
+  {
+    label: 'Booking Items',
+    id: 'BookingItems',
+    purpose: #STANDARD,
+    position: 11 ,
+    type: #LINEITEM_REFERENCE,
+    targetElement: '_Booking'
+  } ]
+
+  @EndUserText.label: 'Travel UUID'
+  @UI.hidden: true
+  UUID;
+
+  @UI: {
+        lineItem:       [ { position: 20, importance: #HIGH } ],
+        identification: [ { position: 20 } ],
+        selectionField: [ { position: 20 } ]
+  }
+  TravelID;
+
+  @UI: {
+        lineItem:       [ { position: 30, importance: #HIGH } ],
+        identification: [ { position: 30 } ],
+        selectionField: [ { position: 30 } ]
+  }
+  AgencyID;
+
+  @UI: {
+        lineItem:       [ { position: 40 } ],
+        identification: [ { position: 40 } ]
+  }
+  CustomerID;
+
+  @UI: {
+ //       lineItem:       [ { position: 50 } ],
+        identification: [ { position: 50 } ]
+  }
+  BookingFee;
+
+  @UI: {
+        lineItem:       [ { position: 55, importance: #HIGH  } ],
+        identification: [ { position: 55 } ]
+  }
+  TotalPrice;
+
+  @UI: {
+      identification: [ { position: 60 } ]
+  }
+  BeginDate;
+
+  @UI: {
+      identification: [ { position: 70 } ]
+  }
+  EndDate;
+
+  @UI: {
+      identification: [ { position: 80 } ]
+  }
+  Description;
+
+  @UI: {
+  lineItem:       [ { position: 90, importance: #HIGH },
+                    { type: #FOR_ACTION, dataAction: 'bookTravel', label: 'Book Travel' },
+                    { type: #FOR_ACTION, dataAction: 'cancelTravel', label: 'Cancel Travel' } ],
+  identification: [ { position: 90 },
+                    { type: #FOR_ACTION, dataAction: 'bookTravel', label: 'Book Travel' },
+                    { type: #FOR_ACTION, dataAction: 'cancelTravel', label: 'Cancel Travel' }  ]
+  }
+  Status;
+
+  @UI: {
+  //      lineItem:       [ { position: 100, label: 'Review Status', importance: #HIGH, criticality: 'ReviewStatus'   } ],
+      identification: [ { position: 100, label: 'Review Status', criticality: 'ReviewStatus' } ]
+  }
+  ReviewStatus;
+
+  @UI: {
+      lineItem:       [ { position: 110, label: 'Notification', importance: #HIGH, criticality: 'ReviewStatus'  } ],
+      identification: [ { position: 110, label: 'Notification', criticality: 'ReviewStatus' } ]
+  }
+  Notification;
+
+}

@@ -1,0 +1,64 @@
+CLASS zrap200_start_bgpf_### DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+    INTERFACES if_serializable_object.
+    INTERFACES if_bgmc_operation.
+    INTERFACES if_bgmc_op_single_tx_uncontr.
+
+    CLASS-METHODS run_via_bgpf_tx_uncontrolled
+      IMPORTING i_rap_bo_entity                 TYPE zbp_r_travel###=>t_travel_for_change
+      RETURNING VALUE(r_process_monitor_string) TYPE string.
+
+    METHODS constructor
+      IMPORTING i_rap_bo_entity TYPE zbp_r_travel###=>t_travel_for_change.
+
+    CONSTANTS:
+      BEGIN OF bgpf_state,
+        unknown         TYPE int1 VALUE IS INITIAL,
+        erroneous       TYPE int1 VALUE 1,
+        new             TYPE int1 VALUE 2,
+        running         TYPE int1 VALUE 3,
+        successful      TYPE int1 VALUE 4,
+        started_from_bo TYPE int1 VALUE 99,
+      END OF bgpf_state.
+
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+    DATA rap_bo_line TYPE zbp_r_travel###=>t_travel_for_change .
+ENDCLASS.
+
+CLASS zrap200_start_bgpf_### IMPLEMENTATION.
+
+
+  METHOD constructor.
+    rap_bo_line = i_rap_bo_entity.
+  ENDMETHOD.
+
+  METHOD if_bgmc_op_single_tx_uncontr~execute.
+
+    DATA rap_update TYPE REF TO zrap200_external_eml_call_### .
+
+    rap_update = NEW #(
+       i_rap_bo_key = rap_bo_line-uuid
+       i_travel_id  = rap_bo_line-TravelID
+    ).
+
+    rap_update->review_travel_bo( ).
+
+  ENDMETHOD.
+
+  METHOD run_via_bgpf_tx_uncontrolled.
+    TRY.
+        DATA(process_monitor) = cl_bgmc_process_factory=>get_default( )->create(
+                                              )->set_name( |Long running process { i_rap_bo_entity-UUID }|
+                                              )->set_operation_tx_uncontrolled(  NEW zrap200_start_bgpf_###( i_rap_bo_entity = i_rap_bo_entity )
+                                              )->save_for_execution( ).
+        r_process_monitor_string = process_monitor->to_string( ).
+      CATCH cx_bgmc INTO DATA(lx_bgmc).
+    ENDTRY.
+  ENDMETHOD.
+
+ENDCLASS.

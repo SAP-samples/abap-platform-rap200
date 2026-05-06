@@ -1,0 +1,78 @@
+@Metadata.layer: #CORE
+
+@UI: {
+  headerInfo: {
+    title.type      : #STANDARD,
+    title.value     : 'BookingID',
+    typeName        : 'Booking',
+    typeNamePlural  : 'Bookings',
+    description     : { type: #STANDARD, value: 'BookingID' }
+  },
+
+  presentationVariant: [{ text: 'Default',
+                          sortOrder:[{ by: 'BookingID', direction: #DESC }],
+                          //groupBy: [ 'CarrierID' ],
+                          visualizations: [{ type: #AS_LINEITEM },
+                                           { type: #AS_LINEITEM }] }]
+}
+annotate view ZC_BOOKING### with
+{
+  @UI.facet: [ {
+    label    : 'General Information',
+    id       : 'GeneralInfo',
+    purpose  : #STANDARD,
+    position : 10 ,
+    type     : #IDENTIFICATION_REFERENCE
+  } ]
+
+  @EndUserText.label: 'Booking UUID'
+  @UI.hidden: true
+  UUID;
+
+  @EndUserText.label: 'Travel UUID'
+  @UI.hidden: true
+  ParentUUID;
+
+  @UI: {
+        lineItem:       [ { position: 20, importance: #HIGH } ],
+        identification: [ { position: 20 } ]
+  }
+  BookingID;
+
+  @UI: {
+        lineItem:       [ { position: 30 } ],
+        identification: [ { position: 30 } ]
+  }
+  BookingDate;
+
+  @UI: {
+        lineItem:       [ { position: 40 } ],
+        identification: [ { position: 40 } ]
+  }
+  CustomerID;
+
+  @UI: {
+        lineItem:       [ { position: 50 } ],
+        identification: [ { position: 50 } ]
+  }
+  CarrierID;
+
+  @UI: {
+        lineItem:       [ { position: 60 } ],
+        identification: [ { position: 60 } ]
+  }
+  ConnectionID;
+
+  @UI: {
+        lineItem:       [ { position: 70 } ],
+        identification: [ { position: 70 } ]
+  }
+  FlightDate;
+
+  @UI: {
+        lineItem:       [ { position: 80 } ],
+        identification: [ { position: 80 } ]
+  }
+  FlightPrice;
+
+}
