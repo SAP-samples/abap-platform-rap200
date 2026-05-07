@@ -38,11 +38,9 @@ This hands-on workshop allows developers to explore various new ABAP Cloud capbi
 <details>
   <summary>🔵 Click to expand!</summary>
 
-  The requirements to follow the exercises in this repository are:
-  1. [Install ABAP Development Tools (ADT)](https://developers.sap.com/tutorials/abap-install-adt.html)
-  2. Basic knowledge of ABAP and RAP ([RAP100 – Build Fiori Apps with the ABAP RESTful Application Programming Model](https://github.com/SAP-samples/abap-platform-rap100))
-
-  3. Only for **self-paced mode**:    
+  The technical requirements to follow the exercises in this repository are:
+  1. [Install the latest ABAP Development Tools (ADT) for Eclipse](https://developers.sap.com/tutorials/abap-install-adt.html)
+  2. Only for **self-paced mode**:    
      [Create an SAP BTP ABAP Environment Trial User](https://developers.sap.com/tutorials/abap-environment-trial-onboarding.html) or use an on-premise system
      
      >> ⚠ **Regarding SAP-led events or workshops** ⚠️     
