@@ -288,84 +288,62 @@ In this exercise, you will create your exercise package ![](../images/adt_packag
      CREATE PUBLIC .
      PUBLIC SECTION.
        INTERFACES if_oo_adt_classrun.
-    
+   
      PROTECTED SECTION.
-     PRIVATE SECTION.
-       
+     PRIVATE SECTION.    
    ENDCLASS.
-        
+    
    CLASS zrap200_generate_demo_data_### IMPLEMENTATION.
-    
      METHOD if_oo_adt_classrun~main.
+       DATA travel_data  TYPE TABLE OF ztravel###.
+       DATA booking_data TYPE TABLE OF zbooking###.
     
-       "delete existing entries in the active database tables
+       " delete existing entries in the active database tables
        DELETE FROM ztravel###.
        DELETE FROM zbooking###.
     
-       "delete existing entries in the draft database tables
-        DELETE FROM ztravel_d###.
-        DELETE FROM zbooking_d###.
-   *    EXIT.
+       " delete existing entries in the draft database tables
+       DELETE FROM ztravel_d###.
+       DELETE FROM zbooking_d###.
     
-        "insert travel demo data
-        INSERT ztravel### FROM (
-            SELECT
-              FROM /dmo/travel
-              FIELDS
-                uuid(  )      AS uuid                   ,
-                travel_id     AS travel_id              ,
-                agency_id     AS agency_id              ,
-                customer_id   AS customer_id            ,
-                begin_date    AS begin_date             ,
-                end_date      AS end_date               ,
-                booking_fee   AS booking_fee            ,
-                total_price   AS total_price            ,
-                currency_code AS currency_code          ,
-                description   AS description            ,
-                CASE status
-                  WHEN 'P' THEN 'N'
-                  ELSE status
-                END           AS status                 ,    "[travel status] B: Booked | X: Cancelled | P: Planned | N: New
-                CASE status
-                  WHEN 'B' THEN CAST( 3 AS INT1 )  "(B) booked
-                  WHEN 'X' THEN CAST( 1 AS INT1 )  "(X) cancelled
-                  ELSE CAST( 0 AS INT1 )           "initial
-                END           AS review_status          ,    "[review status] B = 3 | X = 1 | P = 2 | N = 0
-                CASE status
-                  WHEN 'B' THEN 'Travel successfully booked'
-                  WHEN 'X' THEN 'Travel cancelled'
-                  ELSE ' '
-                END           AS notification           ,    "[review notification]
-                createdby     AS created_by             ,
-                createdat     AS created_at             ,
-                lastchangedby AS last_changed_by        ,
-                lastchangedat AS last_changed_at        ,
-                lastchangedat AS local_last_changed_at
-                ORDER BY travel_id UP TO 100 ROWS
-          ).
-        COMMIT WORK.
+       COMMIT WORK.
     
-        "insert booking demo data
-        INSERT zbooking### FROM (
-            SELECT
-              FROM   /dmo/booking    AS booking
-                JOIN ztravel### AS z
-                ON   booking~travel_id = z~travel_id
-              FIELDS
-                uuid( )                 AS booking_uuid    ,
-                z~uuid                  AS parent_uuid     ,
-                booking~booking_id      AS booking_id      ,
-                booking~booking_date    AS booking_date    ,
-                booking~customer_id     AS customer_id     ,
-                booking~carrier_id      AS carrier_id      ,
-                booking~connection_id   AS connection_id   ,
-                booking~flight_date     AS flight_date     ,
-                booking~flight_price    AS flight_price    ,
-                booking~currency_code   AS currency_code
-          ).
-        COMMIT WORK.
+       SELECT * FROM /dmo/travel
+         INTO CORRESPONDING FIELDS OF TABLE @travel_data
+         UP TO 100 ROWS.
     
-        out->write( | [RAP200 / System time: { cl_abap_context_info=>get_system_time(  ) }] Travel and booking demo data successfully inserted. | ).    
+       LOOP AT travel_data ASSIGNING FIELD-SYMBOL(<ls_travel>).
+         <ls_travel>-uuid = xco_cp=>uuid( )->value.
+         CASE <ls_travel>-status.
+           WHEN 'P'.
+             <ls_travel>-status = 'N'.
+           WHEN 'B'.
+             <ls_travel>-review_status = zrap200_if_travel###=>review_status-booked.
+             <ls_travel>-notification  = 'Travel manually successfully booked'.
+           WHEN 'X'.
+             <ls_travel>-review_status = zrap200_if_travel###=>review_status-cancelled.
+             <ls_travel>-notification  = 'Travel manually cancelled'.
+         ENDCASE.
+    
+       ENDLOOP.
+    
+       " insert travel demo data
+       MODIFY ztravel### FROM TABLE @travel_data.
+       COMMIT WORK.
+    
+       SELECT * FROM /dmo/booking AS booking
+                JOIN ztravel### AS z ON booking~travel_id = z~travel_id
+                INTO CORRESPONDING FIELDS OF TABLE @booking_data.
+    
+       LOOP AT booking_data ASSIGNING FIELD-SYMBOL(<ls_booking>).
+         <ls_booking>-uuid = xco_cp=>uuid( )->value.
+       ENDLOOP.
+    
+       MODIFY zbooking### FROM TABLE @booking_data.
+       COMMIT WORK.
+    
+       out->write(
+           | ✅ [RAP200 (t:{ cl_abap_context_info=>get_system_time( ) })] Travel and booking demo data successfully inserted.| ).
      ENDMETHOD.
     
    ENDCLASS.
