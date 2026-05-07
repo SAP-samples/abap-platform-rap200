@@ -4,7 +4,15 @@
 
 ## Description
 
-This repository contains the material for the hands-on session **RAP200 - Try out RAP Capabilities in a Guided Scenario**.
+This repository contains the material for the hands-on session **RAP200 - Try out RAP Capabilities in a Guided Scenario**. 
+
+This hands-on workshop allows developers to explore various new ABAP Cloud capbilities in a guided scenario: 
+- ADT wizard "_From Scratch OData UI Service_" to build RAP service, with and without AI support from scratch - *_Focus on Plain wizard_
+- Collaborative draft, enabling multiple users to work on the same RAP business object instance simultaneously
+- Event-driven RAP side effects, allowing specific fields to be updated without reloading the entire data whenever a defined business event is raised
+- Use of the Background processing framework (bgPF) to asynchronously trigger an external process within a RAP BO
+- Read-only RAP Analytical table to provide a data visualization in SAP Fiori, supporting set of structured data and multiple aggregation options
+
 
 ## Level
 🧑‍🎓 Intermediate. 
