@@ -86,20 +86,19 @@ annotate view ZC_TRAVEL### with
   Description;
 
   @UI: {
-  lineItem:       [ { position: 90, importance: #HIGH },
+  lineItem:       [ { position: 90, importance: #HIGH },   //, criticality: 'ReviewStatus'
                     { type: #FOR_ACTION, dataAction: 'bookTravel', label: 'Book Travel' },
                     { type: #FOR_ACTION, dataAction: 'cancelTravel', label: 'Cancel Travel' } ],
-  identification: [ { position: 90 },
+  identification: [ { position: 90 },    //, criticality: 'ReviewStatus'
                     { type: #FOR_ACTION, dataAction: 'bookTravel', label: 'Book Travel' },
                     { type: #FOR_ACTION, dataAction: 'cancelTravel', label: 'Cancel Travel' }  ]
   }
   Status;
 
-  @UI: {
-  //      lineItem:       [ { position: 100, label: 'Review Status', importance: #HIGH, criticality: 'ReviewStatus'   } ],
-      identification: [ { position: 100, label: 'Review Status', criticality: 'ReviewStatus' } ]
-  }
-  ReviewStatus;
+  //  @UI: {
+  //      identification: [ { position: 100, label: 'Review Status', criticality: 'ReviewStatus' } ]
+  //  }
+  //  ReviewStatus;
 
   @UI: {
       lineItem:       [ { position: 110, label: 'Notification', importance: #HIGH, criticality: 'ReviewStatus'  } ],
