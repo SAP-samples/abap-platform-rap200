@@ -115,7 +115,7 @@ To achieve that, you will adapt the logic of the action `bookTravel` so that, it
    | Field | Value |
    |---|---|
    | Name | **`ZRAP200_START_BGPF_###`** |
-   | Description | **`RAP200: bgPF class for ###`** |
+   | Description | **`RAP200 bgPF background process`** |
 
 3. Replace the entire source code of ![](../images/adt_class.png)**`ZRAP200_START_BGPF_###`** with the version provided below and replace all occurrences of the placeholder **`###`** with your personal suffix:
 
