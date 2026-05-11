@@ -1,12 +1,12 @@
 [Home - Workshops about the ABAP RESTful Application Programming Model (RAP)](https://github.com/SAP-samples/abap-platform-rap-workshops/blob/main/README.md)
 
-# RAP200 - Try out RAP Capabilities in a Guided Scenario
+# RAP200 – Explore ABAP Cloud Features in a Guided Scenario (Focus: RAP)
 
 ## Description
 
-This repository contains the material for the hands-on session **RAP200 - Try out RAP Capabilities in a Guided Scenario**. 
+This repository contains the material for the hands-on session **RAP200 – Explore ABAP Cloud Features in a Guided Scenario (Focus: RAP)**. 
 
-This hands-on workshop allows developers to explore various new ABAP Cloud capbilities in a guided scenario: 
+This hands-on workshop allows developers to explore various ABAP Cloud features, especially within the ABAP RESTful Application Programming Model (RAP), through a guided scenario: 
 - ADT wizard "_From Scratch OData UI Service_" to build RAP service, with and without AI support from scratch - *_Focus on Plain wizard_
 - Collaborative draft, enabling multiple users to work on the same RAP business object instance simultaneously
 - Event-driven RAP side effects, allowing specific fields to be updated without reloading the entire data whenever a defined business event is raised
