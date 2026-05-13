@@ -13,7 +13,7 @@ In this exercise, you will create your exercise package ![](../images/adt_packag
 - [1.1 - Create your Exercise Package](#exercise-11-create-your-exercise-package)
 - [1.2 - Generate the Transactional UI Service](#exercise-12-generate-the-transactional-ui-service)
 - [1.3 - Publish and Preview the Service](#exercise-13-publish-and-preview-the-service)
-- [1.4 - Generate Demo Data](#exercise-14-generate-demo-data)
+- [1.5 - Generate Demo Data](#exercise-15-generate-demo-data)
 - [Summary & Next Exercise](#summary--next-exercise)
 
 > [!TIP]
@@ -252,7 +252,65 @@ In this exercise, you will create your exercise package ![](../images/adt_packag
 
 </details>
 
-## Exercise 1.4: Generate Demo Data
+
+## Exercise 1.4: Create an helper interface 
+[^Top of page](#)
+
+> First create the interface ![](../images/adt_interface.png)`ZRAP200_IF_TRAVEL###` as helper interface to provide reuse constants and functionalities centrally.
+
+<details>
+  <summary>🔵 Click to expand!</summary>
+  
+1. Right-click on your package ![](../images/adt_package.png)**`ZRAP200_###`** and select **New** > **ABAP Interface**.
+
+2. Enter the following values:
+
+   | Field | Value |
+   |---|---|
+   | Name | **`ZRAP200_IF_TRAVEL###`** |
+   | Description | **`Constants and other stuff`** |
+
+3. Replace the complete class definition with the source code provided below, and replace all occurrences of the placeholder **`###`** with your chosen suffix using **Ctrl+F**.
+
+   <details>
+     <summary>🟣📄 Click to expand the source code!</summary>
+
+   ```abap
+   INTERFACE zrap200_if_travel###
+     PUBLIC .
+     CONSTANTS:
+       BEGIN OF travel_status,       "/dmo/travel_status
+         new       TYPE c LENGTH 1 VALUE 'N', "New / 0
+         booked    TYPE c LENGTH 1 VALUE 'B', "Booked / 1
+         planned   TYPE c LENGTH 1 VALUE 'P', "Planned / 2
+         cancelled TYPE c LENGTH 1 VALUE 'X', "Cancelled / 3
+       END OF travel_status,
+   
+       BEGIN OF review_status,
+         new       TYPE int1 VALUE 0, "(N) New
+         cancelled TYPE int1 VALUE 1, "(C) cancelled
+         planned   TYPE int1 VALUE 2, "(P) planned
+         booked    TYPE int1 VALUE 3, "(B) booked
+       END OF review_status,
+   
+       BEGIN OF review_notification,
+         new       TYPE string VALUE ' ', "N/New, neutral
+         cancelled TYPE string VALUE 'Review WF cancellation for', "(X)cancelled / 3:red
+         planned   TYPE string VALUE 'Sent to review WF...', "(P) planned / 2:yellow
+         booked    TYPE string VALUE 'Review WF successfully processed', "(B) booked / 1:green
+       END OF review_notification.
+   
+   ENDINTERFACE.   
+   ``` 
+
+   </details>
+
+4. Save ![save icon](../images/adt_save.png) (**Ctrl+S**) and activate ![activate icon](../images/adt_activate.png) (**Ctrl+F3**) the changes.
+
+</details>
+
+
+## Exercise 1.5: Generate Demo Data
 [^Top of page](#)
 
 > Create and execute the class ![](../images/adt_class.png)**`ZRAP200_GENERATE_DEMO_DATA_###`** to generate demo data for the Travel and Booking entities.
