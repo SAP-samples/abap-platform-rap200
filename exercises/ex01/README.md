@@ -13,6 +13,7 @@ In this exercise, you will create your exercise package ![](../images/adt_packag
 - [1.1 - Create your Exercise Package](#exercise-11-create-your-exercise-package)
 - [1.2 - Generate the Transactional UI Service](#exercise-12-generate-the-transactional-ui-service)
 - [1.3 - Publish and Preview the Service](#exercise-13-publish-and-preview-the-service)
+- [1.4 - Create an helper interface](#exercise-14-create-an-helper-interface)
 - [1.5 - Generate Demo Data](#exercise-15-generate-demo-data)
 - [Summary & Next Exercise](#summary--next-exercise)
 
