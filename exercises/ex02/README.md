@@ -21,9 +21,8 @@ In this exercise, you will enhance the base _Travel_ BO behavior by adding basic
 
 ### Exercises
 
-- [2.1.- Create an helper interface](#exercise-21-create-an-helper-interface) 
-- [2.2 - Enhance the _Travel_ BO Behavior](#exercise-22-enhance-the-travel-bo-behavior)
-- [2.3 - Preview the Enhanced _Travel_ App](#exercise-23-preview-the-enhanced-travel-app)
+- [2.1 - Enhance the _Travel_ BO Behavior](#exercise-21-enhance-the-travel-bo-behavior)
+- [2.2 - Preview the Enhanced _Travel_ App](#exercise-22-preview-the-enhanced-travel-app)
 - [Summary & Next Exercise](#summary--next-exercise)
 
 <br/>
@@ -45,7 +44,7 @@ In this exercise, you will enhance the base _Travel_ BO behavior by adding basic
 ---
 
 
-## Exercise 2.2: Enhance the _Travel_ BO Behavior
+## Exercise 2.1: Enhance the _Travel_ BO Behavior
 [^Top of page](#)
 
 > Now, enhance the generated _Travel_ app by enhancing the _Travel_ BO behavior with the determination `setStatusToNew`, two actions `bookTravel` and `cancelTravel`,
@@ -140,7 +139,7 @@ In this exercise, you will enhance the base _Travel_ BO behavior by adding basic
     
 </details>  
 
-### Exercise 2.3: Preview the Enhanced Travel App
+### Exercise 2.2 Preview the Enhanced Travel App
 [^Top of page](#)
 
 > Preview the enhanced _Travel_ app with the new determination, actions, and feature control.
