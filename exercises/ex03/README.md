@@ -94,7 +94,7 @@ In this exercise, you will add collaborative draft handling to the Travel applic
      
 4. Now, enable the collaborative draft for the _Booking_ entity by adjusting the behavior defined after the statement **`define behavior for ZR_BOOKING### alias Booking`** by specifying the draft query view ![](../images/adt_ddls.png)**`ZR_BOOKING_QUERY###`**. 
 
-   For that, add the statement **`query ZR_TRAVEL_QUERY###`** to the statement **`draft table zbooking_d###`**, or simply replace it with the one below:
+   For that, add the statement **`query ZR_BOOKING_QUERY###`** to the statement **`draft table zbooking_d###`**, or simply replace it with the one below:
 
      ```abap
      draft table zbooking_d### query ZR_BOOKING_QUERY###
