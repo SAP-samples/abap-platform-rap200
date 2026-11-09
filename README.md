@@ -1,4 +1,5 @@
 [Home - Workshops about the ABAP RESTful Application Programming Model (RAP)](https://github.com/SAP-samples/abap-platform-rap-workshops/blob/main/README.md)
+[![REUSE status](https://api.reuse.software/badge/github.com/SAP-samples/abap-platform-rap200)](https://api.reuse.software/info/github.com/SAP-samples/abap-platform-rap200)
 
 # RAP200 – Explore ABAP Cloud Features in a Guided Scenario (Focus: RAP)
 
